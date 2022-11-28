@@ -102,4 +102,13 @@ After modifying the app-config for Flapper we should get:
 Build for the flapper!
 ```
 
+# TODOs
+
+- Prepare a simple library, with basic I2C driver (or even simple GPIO driver)
+- Prove that it can be compiled into the FreeRTOS
+- Setup a test suite with Renode and vanilla FreeRTOS
+- Compile in the driver into vanilla FreeRTOS
+- Test it with renode with some super basic peripheral like temp or humidity
+sensors (included in Renode already)
+
 
