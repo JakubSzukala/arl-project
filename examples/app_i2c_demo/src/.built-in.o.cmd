@@ -1,1 +1,0 @@
-cmd_/home/js/Projects/arl-project/app_i2c_demo/src/built-in.o :=  arm-none-eabi-gcc --specs=nosys.specs --specs=nano.specs -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -nostdlib   -r -o /home/js/Projects/arl-project/app_i2c_demo/src/built-in.o /home/js/Projects/arl-project/app_i2c_demo/src/hello_world.o
