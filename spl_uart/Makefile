@@ -1,7 +1,7 @@
 ######################################
 # target
 ######################################
-TARGET = spl_test
+TARGET = spl_uart
 
 
 ######################################
@@ -23,7 +23,9 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-C_SOURCES = $(wildcard *.c)
+C_SOURCES += $(wildcard *.c)
+C_SOURCES += $(wildcard Libraries/CMSIS/STM32F4xx/Source/*.c)
+C_SOURCES += $(wildcard Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
 
 # ASM sources
 ASM_SOURCES =  #\
