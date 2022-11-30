@@ -33,8 +33,10 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
+static void UsartSendData(uint32_t size, uint8_t* data, USART_TypeDef * usart);
 
 #ifdef __GNUC__
   /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
@@ -59,11 +61,10 @@ int main(void)
        before to branch to application main. 
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file.
-     */     
+     */
 
-  /* USART configuration */
-  //USART_Config();
-       
+  USART_Config();
+
   /* Output a message on Hyperterminal using printf function */
   //printf("\n\rUSART Printf Example: retarget the C library printf function to the USART\n\r");
 
@@ -124,6 +125,17 @@ static void USART_Config(void)
   // Initialize and enable
   USART_Init(USART3, &USART_InitStructure);
   USART_Cmd(USART3, ENABLE);
+}
+
+static void UsartSendData(uint32_t size, uint8_t* data, USART_TypeDef * usart)
+{
+  uint32_t i;
+
+  for(i = 0; i < size; i++)
+  {
+    while (!(usart->SR & USART_FLAG_TXE));
+    usart->DR = (data[i] & 0x00FF);
+  }
 }
 
 /**
