@@ -33,10 +33,13 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static __IO uint32_t TimingDelay;
 
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
 static void UsartSendData(uint32_t size, uint8_t* data, USART_TypeDef * usart);
+
+static void Delay(__IO uint32_t nTime);
 
 #ifdef __GNUC__
   /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
@@ -63,13 +66,17 @@ int main(void)
        system_stm32f4xx.c file.
      */
 
+  // Init Systick to count in ms according to example (SystemCoreClock values match)
+  if(SysTick_Config(SystemCoreClock / 1000))
+  {
+    // Error
+    while(1);
+  }
   USART_Config();
-
-  /* Output a message on Hyperterminal using printf function */
-  //printf("\n\rUSART Printf Example: retarget the C library printf function to the USART\n\r");
 
   while (1)
   {
+    Delay(1000);
   }
 }
 
@@ -138,11 +145,17 @@ static void UsartSendData(uint32_t size, uint8_t* data, USART_TypeDef * usart)
   }
 }
 
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
+static void Delay(__IO uint32_t nTime)
+{
+  TimingDelay = nTime;
+  while(TimingDelay != 0);
+}
+
+void DecraseTimingDelay()
+{
+  if(TimingDelay != 0) TimingDelay--;
+}
+
 
 #ifdef  USE_FULL_ASSERT
 
