@@ -1,0 +1,10 @@
+using sysbus
+
+mach create "STM32F4"
+machine LoadPlatformDescription @platforms/cpus/stm32f4.repl
+
+showAnalyzer sysbus.usart3
+
+sysbus LoadELF $ORIGIN/../build/spl_uart.elf
+
+start
