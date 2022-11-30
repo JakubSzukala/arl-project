@@ -80,7 +80,8 @@ int main(void)
 static void USART_Config(void)
 {
   USART_InitTypeDef USART_InitStructure;
-  
+  GPIO_InitTypeDef GPIO_InitStructure;
+
   /* USARTx configured as follows:
         - BaudRate = 115200 baud  
         - Word Length = 8 Bits
@@ -96,7 +97,33 @@ static void USART_Config(void)
   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-//  STM_EVAL_COMInit(COM1, &USART_InitStructure);
+  // Enable GPIO clock
+  RCC_AHB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+
+  // Enable USART clock
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+
+  // Remap uart pins TODO: will it be an issue in Renode?
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_USART3); // Tx
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_USART3); // Rx
+
+  /* Configure USART Tx as alternate function  */
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd =  GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_AF;
+
+  GPIO_InitStructure.GPIO_Pin =   GPIO_Pin_10;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  /* Configure USART Rx as alternate function  */
+  GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Pin =   GPIO_Pin_11;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  // Initialize and enable
+  USART_Init(USART3, &USART_InitStructure);
+  USART_Cmd(USART3, ENABLE);
 }
 
 /**
