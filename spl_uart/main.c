@@ -62,10 +62,10 @@ int main(void)
      */     
 
   /* USART configuration */
-  USART_Config();
+  //USART_Config();
        
   /* Output a message on Hyperterminal using printf function */
-  printf("\n\rUSART Printf Example: retarget the C library printf function to the USART\n\r");
+  //printf("\n\rUSART Printf Example: retarget the C library printf function to the USART\n\r");
 
   while (1)
   {
@@ -96,7 +96,7 @@ static void USART_Config(void)
   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-  STM_EVAL_COMInit(COM1, &USART_InitStructure);
+//  STM_EVAL_COMInit(COM1, &USART_InitStructure);
 }
 
 /**
@@ -104,18 +104,6 @@ static void USART_Config(void)
   * @param  None
   * @retval None
   */
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the USART */
-  USART_SendData(EVAL_COM1, (uint8_t) ch);
-
-  /* Loop until the end of transmission */
-  while (USART_GetFlagStatus(EVAL_COM1, USART_FLAG_TC) == RESET)
-  {}
-
-  return ch;
-}
 
 #ifdef  USE_FULL_ASSERT
 
