@@ -26,6 +26,7 @@
 #include "stm32f4xx.h"
 #include <stdio.h>
 
+/*
 #if defined (USE_STM324xG_EVAL)
   #include "stm324xg_eval.h"
 
@@ -38,7 +39,7 @@
 #else
  #error "Please select first the Evaluation board used in your application (in Project Options)"
 #endif
-
+*/
 /* Exported typedef ----------------------------------------------------------*/
 /* Exported define -----------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
