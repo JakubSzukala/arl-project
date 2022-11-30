@@ -34,6 +34,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
+static uint8_t buffer[] = {0x00, 0x01, 0x02};
 
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
@@ -77,6 +78,7 @@ int main(void)
   while (1)
   {
     Delay(1000);
+    UsartSendData(3, buffer,USART3);
   }
 }
 
