@@ -23,13 +23,13 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-C_SOURCES += $(wildcard *.c)
 C_SOURCES += $(wildcard Libraries/CMSIS/STM32F4xx/Source/*.c)
 C_SOURCES += $(wildcard Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
+C_SOURCES += $(wildcard *.c)
 
 # ASM sources
-ASM_SOURCES =  #\
-#startup_stm32f405xx.s
+ASM_SOURCES =  \
+startup_stm32f405xx.s
 
 
 #######################################
@@ -77,17 +77,17 @@ C_DEFS =  \
 #-DUSE_HAL_DRIVER \
 
 # Standard peripheral driver specific flags
-ARCH_CFLAGS := -DSTM32F4XX -DSTM32F40_41xxx -DHSE_VALUE=8000000 -DUSE_STDPERIPH_DRIVER -DUSE_STM324xG_EVAL
+# #-DUSE_STM324xG_EVAL
+ARCH_CFLAGS := -DSTM32F4XX -DSTM32F40_41xxx -DHSE_VALUE=8000000 -DUSE_STDPERIPH_DRIVER 
 
 # AS includes
 AS_INCLUDES = 
 
 # C includes
-C_INCLUDES =  \
--I$(PWD) \
--I$(PWD)/Libraries/CMSIS/STM32F4xx/Include \
--I$(PWD)/Libraries/STM32F4xx_StdPeriph_Driver/inc \
--I$(PWD)/Libraries/CMSIS/Core/Include
+C_INCLUDES += -I.
+C_INCLUDES += -ILibraries/CMSIS/STM32F4xx/Include
+C_INCLUDES += -ILibraries/CMSIS/Core/Include
+C_INCLUDES += -ILibraries/STM32F4xx_StdPeriph_Driver/inc
 #-I$(PWD)/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 #-I$(PWD)/Utilities/STM32_EVAL/Common \
 #-I$(PWD)/Utilities/STM32_EVAL/STM3240_41_G_EVAL
@@ -159,10 +159,19 @@ $(BUILD_DIR):
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
-  
+
+my_test:
+	echo $(C_SOURCES)
+
+#Print preprocessor #defines
+prep:
+	@$(CC) $(CFLAGS) -dM -E - < /dev/null
+
 #######################################
 # dependencies
 #######################################
 -include $(wildcard $(BUILD_DIR)/*.d)
+
+.PHONY: all clean prep
 
 # *** EOF ***
