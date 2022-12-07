@@ -104,6 +104,15 @@ Build for the flapper!
 
 # TODOs
 
+- [ ] Compile in the FreeRTOS
+    - [ ] Test crazyflie application-layer program with it
+- [ ] Compile in Drivers from vendor/CMSIS/CMSIS/DoxyGen/Driver/src/
+    - [ ] Check their source and version
+- [ ] Find the way to keep the libs taken from crazyflie-firmware in sync with this repo
+    - [ ] Git hooks - scripts that will run events in git repo [link to examples](https://github.com/aitemr/awesome-git-hooks)
+- [ ] Make a CI that will compile binaries in cloud
+- [ ] Find a way to upload binaries to the crazyflie, other way than make cload
+
 - Prepare a simple library, with basic I2C driver (or even simple GPIO driver)
 - Prove that it can be compiled into the FreeRTOS
 - Setup a test suite with Renode and vanilla FreeRTOS
@@ -111,4 +120,6 @@ Build for the flapper!
 - Test it with renode with some super basic peripheral like temp or humidity
 sensors (included in Renode already)
 
+- Make renode simulation for STM32F4xx
+- Prepare project in cubemx, include STM32F4xx_StdPeriph_Driver in version **1.8** https://www.st.com/en/embedded-software/stsw-stm32065.html#overview
 
