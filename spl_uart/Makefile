@@ -26,6 +26,8 @@ BUILD_DIR = build
 C_SOURCES += $(wildcard Libraries/CMSIS/STM32F4xx/Source/*.c)
 C_SOURCES += $(wildcard Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
 C_SOURCES += $(wildcard *.c)
+C_SOURCES += $(wildcard FreeRTOS/portable/GCC/ARM_CM4F/*.c)
+C_SOURCES += $(wildcard FreeRTOS/*.c)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -88,9 +90,8 @@ C_INCLUDES += -I.
 C_INCLUDES += -ILibraries/CMSIS/STM32F4xx/Include
 C_INCLUDES += -ILibraries/CMSIS/Core/Include
 C_INCLUDES += -ILibraries/STM32F4xx_StdPeriph_Driver/inc
-#-I$(PWD)/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
-#-I$(PWD)/Utilities/STM32_EVAL/Common \
-#-I$(PWD)/Utilities/STM32_EVAL/STM3240_41_G_EVAL
+C_INCLUDES += -IFreeRTOS/portable/GCC/ARM_CM4F
+C_INCLUDES += -IFreeRTOS/include
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
