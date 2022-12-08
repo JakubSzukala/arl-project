@@ -21,13 +21,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F4xx_StdPeriph_Examples
-  * @{
-  */
+#include "FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
-/** @addtogroup USART_Printf
-  * @{
-  */ 
+#include "stm32fxxx.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -44,21 +42,8 @@ static void UsartSendData(uint32_t size, uint8_t* data, USART_TypeDef * usart);
 
 static void Delay(__IO uint32_t nTime);
 
-#ifdef __GNUC__
-  /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
-     set to 'Yes') calls __io_putchar() */
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-  
 /* Private functions ---------------------------------------------------------*/
 
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 int main(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 
@@ -160,6 +145,10 @@ void DecraseTimingDelay()
   if(TimingDelay != 0) TimingDelay--;
 }
 
+static void appTask()
+{
+
+}
 
 #ifdef  USE_FULL_ASSERT
 
@@ -181,12 +170,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
