@@ -63,13 +63,18 @@
  * - src/drivers/src/pmw3901.c
  **/
 
-#define RW_BIT    0x0080
+#define RW_BIT    0x0080u
 
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
     uint8_t reg,
     uint8_t val);
+static void register_read(
+    const GPIO_TypeDef cs_gpio,
+    const uint16_t cs_pin,
+    uint8_t reg,
+    uint8_t *val);
 
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
@@ -85,6 +90,7 @@ void appMain() {
   GPIO_Init(GPIOB, &gpio_init_struct);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1); // Disable on init
 
+  
   while(1) {
     vTaskDelay(M2T(2000));
     DEBUG_PRINT("Hello World!\n");
@@ -99,15 +105,15 @@ static void register_write(
     uint8_t reg,
     uint8_t val) {
   reg |= RW_BIT; // Set operation indicator bit as write
-  // reg &= ~(RW_BIT); would clear and set as read
 
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
 
   sleepus(50);
 
+  // this &reg, &reg is little bit weird, not sure how safe it is
   spiExchange(1, &reg, &reg); // Send control byte
-  sleepus(50); // Adjust timing, in datasheet it is not mentioned
+  sleepus(50);
   spiExchange(1, &val, &val);
   sleepus(50);
 
@@ -115,3 +121,29 @@ static void register_write(
   spiEndTransaction();
   sleepus(200);
 }
+
+// Delays are the same as in pmw3901 example, but not sure if they are necessary
+static void register_read(
+    const GPIO_TypeDef cs_gpio,
+    const uint16_t cs_pin,
+    uint8_t reg,
+    uint8_t *val){
+  uint8_t dummy = 0;
+  reg &= ~(RW_BIT); // clear operation indicator bit - read
+  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
+
+  sleepus(50);
+
+  spiExchange(1, &reg, &reg);
+  sleepus(500);
+  spiExchange(1, &dummy, val);
+  sleepus(50);
+
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
+  spiEndTransaction();
+  sleepus(200);
+}
+
+
+
