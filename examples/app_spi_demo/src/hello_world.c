@@ -65,6 +65,29 @@
 
 #define RW_BIT    0x0080u
 
+
+// CTRL_MEAS
+#define CTRL_MEAS   0x00F4
+// Oversampling of temperature data control bits
+#define OSRS_T_0    ( 1 << 5 )
+#define OSRS_T_1    ( 1 << 6 )
+#define OSRS_T_2    ( 1 << 7 )
+// Oversampling of pressure data control bits
+#define OSRS_P_0    ( 1 << 2 )
+#define OSRS_P_1    ( 1 << 3 )
+#define OSRS_P_2    ( 1 << 4 )
+// Operating mode
+#define OP_MODE_0   ( 1 << 0 )
+#define OP_MODE_1   ( 1 << 1 )
+
+// Temperature registers
+#define TEMP_LSB    0xFB
+#define TEMP_MSB    0xFA
+
+// Device ID register
+#define ID          0xD0
+
+
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
@@ -90,10 +113,36 @@ void appMain() {
   GPIO_Init(GPIOB, &gpio_init_struct);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1); // Disable on init
 
-  
+  spiBegin();
+
+  uint8_t val = 0;
+  // First read the id register
+  register_read(*GPIOB, GPIO_Pin_4, ID, &val);
+  DEBUG_PRINT("Read sensor id: %X and correct is 0x58\n", val);
+
+  // Check mode
+  register_read(*GPIOB, GPIO_Pin_4, CTRL_MEAS, &val);
+  DEBUG_PRINT("Operation mode: %X\n", val & 0x03);
+
+  // Normal mode with temperature measurement enabled
+  uint8_t new_val = OP_MODE_0 | OP_MODE_1 | OSRS_T_0;
+
+  // Wakeup from sleep (sensor after powerup is in sleep mode)
+  register_write(*GPIOB, GPIO_Pin_4, CTRL_MEAS, new_val);
+
+  // Confirm that writing was correct:
+  register_read(*GPIOB, GPIO_Pin_4, CTRL_MEAS, &val);
+  DEBUG_PRINT("After writing to the register, the read - back is %X\n", val);
+
+  static uint8_t temperature_lsb, temperature_msb;
+  static uint16_t temperature;
   while(1) {
+    // Read the temperature in loop
+    register_read(*GPIOB, GPIO_Pin_4, TEMP_MSB, &temperature_msb);
+    register_read(*GPIOB, GPIO_Pin_4, TEMP_LSB, &temperature_lsb);
+    temperature = ((uint16_t) temperature_msb << 8 ) | temperature_lsb;
+    DEBUG_PRINT("Temperature read raw: %X\n", temperature);
     vTaskDelay(M2T(2000));
-    DEBUG_PRINT("Hello World!\n");
   }
 }
 
