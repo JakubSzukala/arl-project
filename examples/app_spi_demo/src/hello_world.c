@@ -39,6 +39,9 @@
 #define DEBUG_MODULE "HELLOWORLD"
 #include "debug.h"
 
+#include "deck_spi.h"
+#include "sleepus.h"
+
 /**
  * Remarks
  * - Double check the SPI mode of operation
@@ -57,10 +60,16 @@
  *   - After power on reset read the chip id should be 0x58
  *   - Set the normal mode (default after power on reset is sleep), with validation
  *   - Read temperature in loop to se if it changes
- * - 
+ * - src/drivers/src/pmw3901.c
  **/
 
-//static void register_write()
+#define RW_BIT    0x0080
+
+static void register_write(
+    const GPIO_TypeDef cs_gpio,
+    const uint16_t cs_pin,
+    uint8_t reg,
+    uint8_t val);
 
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
@@ -80,4 +89,29 @@ void appMain() {
     vTaskDelay(M2T(2000));
     DEBUG_PRINT("Hello World!\n");
   }
+}
+
+// First send the full register addr without 7th bit (used as operation
+// indicator RW=0 for write) that is control byte and then data byte
+static void register_write(
+    const GPIO_TypeDef cs_gpio,
+    const uint16_t cs_pin,
+    uint8_t reg,
+    uint8_t val) {
+  reg |= RW_BIT; // Set operation indicator bit as write
+  // reg &= ~(RW_BIT); would clear and set as read
+
+  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
+
+  sleepus(50);
+
+  spiExchange(1, &reg, &reg); // Send control byte
+  sleepus(50); // Adjust timing, in datasheet it is not mentioned
+  spiExchange(1, &val, &val);
+  sleepus(50);
+
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
+  spiEndTransaction();
+  sleepus(200);
 }
