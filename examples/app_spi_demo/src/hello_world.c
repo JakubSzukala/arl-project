@@ -111,6 +111,8 @@ void appMain() {
     .GPIO_PuPd = GPIO_PuPd_NOPULL
   };
   GPIO_Init(GPIOB, &gpio_init_struct);
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0); // Disable on init
+  sleepus(1000);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1); // Disable on init
 
   spiBegin();
@@ -146,6 +148,9 @@ void appMain() {
   }
 }
 
+// TODO: Get rid of timeouts: lookup https://github.com/adafruit/Adafruit_BusIO/blob/master/Adafruit_SPIDevice.cpp
+// TODO: Add some prints to checkout the values that are modified in below functions
+// TODO: Add handling of return bool value from spiExchange
 // First send the full register addr without 7th bit (used as operation
 // indicator RW=0 for write) that is control byte and then data byte
 static void register_write(
