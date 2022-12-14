@@ -47,7 +47,7 @@
 #include "bmp280.h"
 
 // Set the I2C address of the BMP280
-#define BMP280_I2C_ADDRESS 0x77
+#define BMP280_I2C_ADDRESS 0x76
 
 // Initialize the BMP280
 struct bmp280_t bmp280;

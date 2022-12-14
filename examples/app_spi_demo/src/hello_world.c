@@ -150,7 +150,12 @@ void appMain() {
 
 // TODO: Get rid of timeouts: lookup https://github.com/adafruit/Adafruit_BusIO/blob/master/Adafruit_SPIDevice.cpp
 // TODO: Add some prints to checkout the values that are modified in below functions
-// TODO: Add handling of return bool value from spiExchange
+// TODO: Add handling of return bool value from spiExchange (semaphore)
+// TODO: Check other frequencies?
+// Registers are correct, compared with BOSCH headers
+// Arduino driver is useless, BOSCH driver is just a frame where you include
+// your own driver implementation (crazyflie did that but only for i2c)
+
 // First send the full register addr without 7th bit (used as operation
 // indicator RW=0 for write) that is control byte and then data byte
 static void register_write(
@@ -160,15 +165,16 @@ static void register_write(
     uint8_t val) {
   reg |= RW_BIT; // Set operation indicator bit as write
 
+  uint8_t dummy = 0;
+
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
 
   sleepus(50);
 
-  // this &reg, &reg is little bit weird, not sure how safe it is
-  spiExchange(1, &reg, &reg); // Send control byte
+  spiExchange(1, &reg, &dummy); // Send control byte
   sleepus(50);
-  spiExchange(1, &val, &val);
+  spiExchange(1, &val, &dummy);
   sleepus(50);
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
@@ -183,15 +189,25 @@ static void register_read(
     uint8_t reg,
     uint8_t *val){
   uint8_t dummy = 0;
+  uint8_t temp_buffer = 0;
+  bool semaphore_take_status = false;
   reg &= ~(RW_BIT); // clear operation indicator bit - read
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
 
   sleepus(50);
 
-  spiExchange(1, &reg, &reg);
+  semaphore_take_status = spiExchange(1, &reg, &temp_buffer);
+  if(!semaphore_take_status) {
+    DEBUG_PRINT("Failed to take semaphore!\n");
+  }
+  DEBUG_PRINT("Temp buffer %d\n", temp_buffer);
   sleepus(500);
-  spiExchange(1, &dummy, val);
+  semaphore_take_status = spiExchange(1, &dummy, val);
+  if(!semaphore_take_status) {
+    DEBUG_PRINT("Failed to take semaphore!\n");
+  }
+  DEBUG_PRINT("VAL: %d\n", *val);
   sleepus(50);
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
