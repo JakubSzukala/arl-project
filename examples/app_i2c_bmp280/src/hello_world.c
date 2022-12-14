@@ -50,25 +50,27 @@
 #define BMP280_I2C_ADDRESS 0x77
 
 // Initialize the BMP280
-bmp280_t bmp280;
+struct bmp280_t bmp280;
 
-int appMain(void) {
+void appMain(void) {
   DEBUG_PRINT("Waiting for activation ...\n");
 
   // Initialize the I2C bus
   i2cdevInit(I2C1_DEV);
 
   // Initialize the BMP280
-  bmp280_init(&bmp280, BMP280_I2C_ADDRESS);
+  bmp280_init(&bmp280);
 
 
   while(1) {
-  // Read the temperature from the BMP280
-  float temperature = bmp280_readTemperature(&bmp280);
-
-  // Print the temperature
-  printf("Temperature: %.2f C\n", temperature);
+    // Read the temperature from the BMP280
+    uint32_t a = 0;
+    bstdr_ret_t status = bmp280_read_uncomp_temperature(&a);
+    if(status == BSTDR_OK) {
+      DEBUG_PRINT("Temperature: %lu\n", a);
+    }
+    else {
+      DEBUG_PRINT("ERROR\n");
+    }
   }
-
-  return 0;
 }
