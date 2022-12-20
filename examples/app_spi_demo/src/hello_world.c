@@ -160,8 +160,8 @@ static void register_write(
     uint8_t val) {
   reg |= RW_BIT; // Set operation indicator bit as write
 
-  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
+  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
   // this &reg, &reg is little bit weird, not sure how safe it is
   spiExchange(1, &reg, &reg); // Send control byte
@@ -178,8 +178,8 @@ static void register_read(
     uint8_t *val){
   uint8_t dummy = 0;
   reg &= ~(RW_BIT); // clear operation indicator bit - read
-  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
+  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
   spiExchange(1, &reg, &reg);
   spiExchange(1, &dummy, val);
