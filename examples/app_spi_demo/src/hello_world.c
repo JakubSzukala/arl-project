@@ -171,7 +171,6 @@ static void register_write(
   spiEndTransaction();
 }
 
-// Delays are the same as in pmw3901 example, but not sure if they are necessary
 static void register_read(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
