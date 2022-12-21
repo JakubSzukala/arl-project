@@ -168,21 +168,23 @@ static void register_write(
     uint8_t val) {
   // Not sure how necessary it is but in src/drivers/src/lh_flasher.c it was
   // done this way
-  static uint8_t tx_buff, rx_buff;
-  tx_buff = val;
+  static uint8_t tx_buff[2], rx_buff[2];
 
   reg |= RW_BIT; // Set operation indicator bit as write
+
+  tx_buff[0] = reg;
+  tx_buff[1] = val;
+
+  rx_buff[0] = 0;
+  rx_buff[0] = 0;
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
-  spiExchange(1, &tx_buff, &rx_buff); // Send control byte with address
-  spiExchange(1, &tx_buff, &rx_buff); // Send value
+  spiExchange(2, tx_buff, rx_buff); // Send value
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
   spiEndTransaction();
-
-  rx_buff = 0;
 }
 
 static void register_read(
@@ -190,24 +192,25 @@ static void register_read(
     const uint16_t cs_pin,
     uint8_t reg,
     uint8_t *val){
-  uint8_t dummy = 0;
-  static uint8_t tx_buff, rx_buff;
-  tx_buff = reg;
+  static uint8_t tx_buff[2], rx_buff[2];
   // clear operation indicator bit - read
-  reg &= ~(RW_BIT); 
+  reg &= ~(RW_BIT);
+
+  tx_buff[0] = reg;
+  tx_buff[1] = 0;
+
+  rx_buff[0] = 0;
+  rx_buff[1] = 0;
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
-  // Passing the same stack value as tx and rx buffer maybe is ok, shift
-  // registers are used so it should not mess the data up (maybe)
-  spiExchange(1, &tx_buff, &rx_buff);
-  spiExchange(1, &dummy, &rx_buff);
+
+  spiExchange(2, tx_buff, rx_buff);
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
   spiEndTransaction();
 
-  *val = rx_buff;
-  rx_buff = 0;
+  *val = rx_buff[1];
 }
 
 
