@@ -153,6 +153,14 @@ void appMain() {
 // TODO: Add handling of return bool value from spiExchange
 // First send the full register addr without 7th bit (used as operation
 // indicator RW=0 for write) that is control byte and then data byte
+
+// Done:
+// Mode is correct 00
+// Mode 4 wire is correct
+// Changed /CS order with spiBegin (mode select is after falling edge on cs and
+// is determined on the idle state of the clock)
+// Static buffers introduced
+// Maybe we should write 2 bytes in one transmission instead of 1 by 1
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
@@ -162,9 +170,9 @@ static void register_write(
   // done this way
   static uint8_t tx_buff, rx_buff;
   tx_buff = val;
-   
+
   reg |= RW_BIT; // Set operation indicator bit as write
-  
+
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
@@ -184,10 +192,10 @@ static void register_read(
     uint8_t *val){
   uint8_t dummy = 0;
   static uint8_t tx_buff, rx_buff;
-  tx_buff = reg; 
+  tx_buff = reg;
   // clear operation indicator bit - read
   reg &= ~(RW_BIT); 
-  
+
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
   // Passing the same stack value as tx and rx buffer maybe is ok, shift
@@ -197,7 +205,7 @@ static void register_read(
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
   spiEndTransaction();
-  
+
   *val = rx_buff;
   rx_buff = 0;
 }
