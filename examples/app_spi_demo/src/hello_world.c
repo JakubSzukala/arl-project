@@ -161,6 +161,8 @@ void appMain() {
 // is determined on the idle state of the clock)
 // Static buffers introduced
 // Maybe we should write 2 bytes in one transmission instead of 1 by 1
+// In half of examples length of transmission is a sum of tx and rx lengths,
+// which is probably not correct
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
@@ -169,14 +171,14 @@ static void register_write(
   // Not sure how necessary it is but in src/drivers/src/lh_flasher.c it was
   // done this way
   static uint8_t tx_buff[2], rx_buff[2];
-
+  uint8_t dummy = 0;
   reg |= RW_BIT; // Set operation indicator bit as write
 
   tx_buff[0] = reg;
   tx_buff[1] = val;
 
-  rx_buff[0] = 0;
-  rx_buff[0] = 0;
+  rx_buff[0] = dummy;
+  rx_buff[0] = dummy;
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
@@ -193,11 +195,12 @@ static void register_read(
     uint8_t reg,
     uint8_t *val){
   static uint8_t tx_buff[2], rx_buff[2];
+  uint8_t dummy = 0;
   // clear operation indicator bit - read
   reg &= ~(RW_BIT);
 
   tx_buff[0] = reg;
-  tx_buff[1] = 0;
+  tx_buff[1] = dummy;
 
   rx_buff[0] = 0;
   rx_buff[1] = 0;
