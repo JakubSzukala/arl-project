@@ -155,11 +155,12 @@ void appMain() {
 // indicator RW=0 for write) that is control byte and then data byte
 
 // Done:
-// Mode is correct 00
-// Mode 4 wire is correct
+// Mode is correct 00 (selected from idle after CS is pulled down)
+// Mode 4 wire is correct (3 wire define is not set)
+// Clock that BMP280 can handle is up to 10Mhz so it's correct
 // Changed /CS order with spiBegin (mode select is after falling edge on cs and
 // is determined on the idle state of the clock)
-// Static buffers introduced
+// Static buffers introduce
 // Maybe we should write 2 bytes in one transmission instead of 1 by 1
 // In half of examples length of transmission is a sum of tx and rx lengths,
 // which is probably not correct
