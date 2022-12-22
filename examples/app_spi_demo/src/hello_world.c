@@ -178,9 +178,11 @@ static void register_write(
   // Set operation indicator bit as write
   reg |= RW_BIT;
 
+  // First assert /CS - SPI mode selection for BMP280
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
+  // Send control byte with address and then value for that address 8 bit regs
   tx_buff = reg;
   spiExchange(1, &tx_buff, &dummy); // Send control byte with address
   tx_buff = val;
@@ -201,9 +203,11 @@ static void register_read(
   // clear operation indicator bit - read
   reg &= ~(RW_BIT);
 
+  // First assert /CS - SPI mode selection for BMP280
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
+  // Send an address to read and then 0 and read value
   tx_buff = reg;
   spiExchange(1, &tx_buff, &dummy);
   spiExchange(1, 0, &rx_buff);
