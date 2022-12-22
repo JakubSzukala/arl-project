@@ -111,17 +111,20 @@ void appMain() {
     .GPIO_PuPd = GPIO_PuPd_NOPULL
   };
   GPIO_Init(GPIOB, &gpio_init_struct);
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0); // Disable on init
-  sleepus(1000);
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1); // Disable on init
 
+  // Pull down the chip select so BMP280 enters the SPI mode
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
+  sleepus(10000);
+  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
+
+  // Initialize SPI in DMA mode
   spiBegin();
 
   uint8_t val = 0;
   // First read the id register
   register_read(*GPIOB, GPIO_Pin_4, ID, &val);
   DEBUG_PRINT("Read sensor id: %X and correct is 0x58\n", val);
-
+  /*
   // Check mode
   register_read(*GPIOB, GPIO_Pin_4, CTRL_MEAS, &val);
   DEBUG_PRINT("Operation mode: %X\n", val & 0x03);
@@ -138,14 +141,16 @@ void appMain() {
 
   static uint8_t temperature_lsb, temperature_msb;
   static uint16_t temperature;
+  */
   while(1) {
     // Read the temperature in loop
     //register_read(*GPIOB, GPIO_Pin_4, TEMP_MSB, &temperature_msb);
     //register_read(*GPIOB, GPIO_Pin_4, TEMP_LSB, &temperature_lsb);
     //register_read(*GPIOB, GPIO_Pin_4, 0xAA, &temperature_lsb);
     register_read(*GPIOB, GPIO_Pin_4, ID, &val);
-    temperature = ((uint16_t) temperature_msb << 8 ) | temperature_lsb;
-    DEBUG_PRINT("Temperature read raw: %X\n", temperature);
+    DEBUG_PRINT("ID read: %d\n", val);
+    //temperature = ((uint16_t) temperature_msb << 8 ) | temperature_lsb;
+    //DEBUG_PRINT("Temperature read raw: %X\n", temperature);
     vTaskDelay(M2T(2000));
   }
 }
