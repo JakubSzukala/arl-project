@@ -140,8 +140,9 @@ void appMain() {
   static uint16_t temperature;
   while(1) {
     // Read the temperature in loop
-    register_read(*GPIOB, GPIO_Pin_4, TEMP_MSB, &temperature_msb);
-    register_read(*GPIOB, GPIO_Pin_4, TEMP_LSB, &temperature_lsb);
+    //register_read(*GPIOB, GPIO_Pin_4, TEMP_MSB, &temperature_msb);
+    //register_read(*GPIOB, GPIO_Pin_4, TEMP_LSB, &temperature_lsb);
+    register_read(*GPIOB, GPIO_Pin_4, ID, &val);
     temperature = ((uint16_t) temperature_msb << 8 ) | temperature_lsb;
     DEBUG_PRINT("Temperature read raw: %X\n", temperature);
     vTaskDelay(M2T(2000));
