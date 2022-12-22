@@ -175,7 +175,7 @@ static void register_write(
     uint8_t val) {
   // Not sure how necessary it is but in src/drivers/src/lh_flasher.c it was
   // done this way
-  static uint8_t tx_buff, rx_buff;
+  static uint8_t tx_buff, dummy;
 
   reg |= RW_BIT; // Set operation indicator bit as write
 
@@ -183,14 +183,12 @@ static void register_write(
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
 
   tx_buff = reg;
-  spiExchange(1, &tx_buff, &rx_buff); // Send control byte with address
+  spiExchange(1, &tx_buff, &dummy); // Send control byte with address
   tx_buff = val;
-  spiExchange(1, &tx_buff, &rx_buff); // Send value
+  spiExchange(1, &tx_buff, &dummy); // Send value
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
   spiEndTransaction();
-
-  rx_buff = 0;
 }
 
 static void register_read(
