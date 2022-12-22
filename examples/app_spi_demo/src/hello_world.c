@@ -173,11 +173,10 @@ static void register_write(
     const uint16_t cs_pin,
     uint8_t reg,
     uint8_t val) {
-  // Not sure how necessary it is but in src/drivers/src/lh_flasher.c it was
-  // done this way
   static uint8_t tx_buff, dummy;
 
-  reg |= RW_BIT; // Set operation indicator bit as write
+  // Set operation indicator bit as write
+  reg |= RW_BIT;
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
@@ -198,16 +197,16 @@ static void register_read(
     uint8_t *val){
   uint8_t dummy = 0;
   static uint8_t tx_buff, rx_buff;
-  tx_buff = reg;
+
   // clear operation indicator bit - read
   reg &= ~(RW_BIT);
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);
-  // Passing the same stack value as tx and rx buffer maybe is ok, shift
-  // registers are used so it should not mess the data up (maybe)
-  spiExchange(1, &tx_buff, &rx_buff);
-  spiExchange(1, &dummy, &rx_buff);
+
+  tx_buff = reg;
+  spiExchange(1, &tx_buff, &dummy);
+  spiExchange(1, 0, &rx_buff);
 
   GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
   spiEndTransaction();
