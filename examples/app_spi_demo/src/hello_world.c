@@ -153,6 +153,7 @@ void appMain() {
     //DEBUG_PRINT("Temperature read raw: %X\n", temperature);
     vTaskDelay(M2T(2000));
   }
+  register_write(*GPIOB, GPIO_Pin_4, CTRL_MEAS, val);
 }
 
 // TODO: Get rid of timeouts: lookup https://github.com/adafruit/Adafruit_BusIO/blob/master/Adafruit_SPIDevice.cpp
