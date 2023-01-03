@@ -66,6 +66,7 @@ int main(void)
   {
     Delay(1000);
     UsartSendData(sizeof(buffer), buffer,USART3);
+    //UsartSendData();
   }
 }
 
