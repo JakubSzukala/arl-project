@@ -106,39 +106,7 @@ Crazyflie on default when malloc or stackoverflow happens, will turn off motors.
 
 # TODOs
 
-- [ ] Compile in the FreeRTOS
-    - [x] Update Makefile if necessary - lookup FreeRTOSv202112.00/FreeRTOS/Demo/ARM7_LPC2106_GCC
-        - [x] c files and includes add to comiplation, used official FreeRTOS sources, not crazyflie's. Should not matter
-        - [x] FreeRTOS config file  FreeRTOSConfig.h to tailor kernel to the application, use the same as crazyflie (removed config.h, too much clutter, took only necessary part)
-        - [x] FreeRTOSConfig.h requires config.h which is Bitcraze/crazyflie custom, trim it and include in build
-        - We don't need trace.h, nrf24l01.h
-        - We also don't need task prios and names defines, we won't define many of them
-        -  FreeRTOSConfig.h seems to be stock (no license from Bitcraze) - NOPE
-        - Compiler, objcopy are different CC
-        - Except regular FreeRTOS files (like tasks.c, queue.c etc) there are also special for ARM7 architecture - $(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC2000/portISR.c serial/serialISR.c
-        - Some flags also differ, but maybe they won't get in the way
-        - [x] Adjust the portable/ source files to match arch and compiler
-        - In crazyflie portable/ is also used so copy it
-    - [x] Merge the files from crazyflie-firmware with local test app avoided that for FreeRTOS (look up)
-    - [x] I disabled stack overflow check, as it needs its own implementation for handler and is not necessary rn. Crazyflie has it's implementation that prints, flashes leds and disables motors in case of stack overflow.
-    - [ ] Update existing UART demo with RTOS functionalities
-        - Checkout crazyflie-firmware and FreeRTOS official docs
-        - Maybe even copy majority of the hello world application from crazyflie
-    - [ ] Test crazyflie application-layer program with it
-- [ ] Compile in Drivers from vendor/CMSIS/CMSIS/DoxyGen/Driver/src/
-    - [ ] Check their source and version
-- [ ] Find the way to keep the libs taken from crazyflie-firmware in sync with this repo
-    - [ ] Git hooks - scripts that will run events in git repo [link to examples](https://github.com/aitemr/awesome-git-hooks)
-- [ ] Make a CI that will compile binaries in cloud
-- [ ] Find a way to upload binaries to the crazyflie, other way than make cload
-
-- Prepare a simple library, with basic I2C driver (or even simple GPIO driver)
-- Prove that it can be compiled into the FreeRTOS
-- Setup a test suite with Renode and vanilla FreeRTOS
-- Compile in the driver into vanilla FreeRTOS
-- Test it with renode with some super basic peripheral like temp or humidity
-sensors (included in Renode already)
-
-- Make renode simulation for STM32F4xx
-- Prepare project in cubemx, include STM32F4xx_StdPeriph_Driver in version **1.8** https://www.st.com/en/embedded-software/stsw-stm32065.html#overview
-
+- Looked up bosch's driver and it really is just a framework to which You can
+insert Your own read and write functions. So it is not much of a help
+- In crazyflie indeed i2c is implemented in this way so it should work
+- 
