@@ -45,6 +45,7 @@
 // Import the necessary libraries
 #include "bstdr_comm_support.h"
 #include "bmp280.h"
+#include "i2cdev.h"
 
 // Initialize the BMP280
 static struct bmp280_t bmp280;
@@ -52,23 +53,32 @@ static struct bmp280_t bmp280;
 void appMain(void) {
   DEBUG_PRINT("Waiting for activation ...\n");
 
-  bstdr_ret_t rslt;
+  // bstdr_burst_write uses I2C1_DEV so we need to init it first
+  // I2C1_DEV == &deckBus
+  i2cdrvInit(I2C1_DEV);
 
+  bstdr_ret_t rslt;
   // Using api from crazyflie as an example: src/hal/src/sensors_bosch.c
   // Initialize the BMP280, set func ptrs to bosch sensortec implementations
   bmp280.bus_read = bstdr_burst_read;
   bmp280.bus_write = bstdr_burst_write;
   bmp280.delay_ms = bstdr_ms_delay;
-  bmp280.dev_addr = BMP280_I2C_ADDRESS2; //0x77 SDO HIGH
+  bmp280.dev_addr = BMP280_I2C_ADDRESS1; //0x76 SDO low
   rslt = bmp280_init(&bmp280);
 
   if(rslt == BSTDR_OK) {
     while(1) {
+      vTaskDelay(M2T(2000));
       // Read the uncompensated temperature from the BMP280
       uint32_t a = 0;
       rslt = bmp280_read_uncomp_temperature(&a);
+      //float temperature = bmp280_compensate_temperature_float(a);
+      uint32_t press = 0;
+      int32_t temp = 0;
+      rslt = bmp280_read_pressure_temperature(&press, &temp);
       if(rslt == BSTDR_OK) {
-        DEBUG_PRINT("Temperature: %lu\n", a);
+        DEBUG_PRINT("Temperature uncompensated: %lu\n", temp);
+        //DEBUG_PRINT("Temperature compensated: %g\n", (float)temperature);
       }
       else {
         DEBUG_PRINT("ERROR: Could not read temperature %d\n", rslt);
