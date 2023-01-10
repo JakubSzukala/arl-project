@@ -63,31 +63,6 @@
  * - src/drivers/src/pmw3901.c
  **/
 
-#define RW_BIT    0x0080u
-
-
-// CTRL_MEAS
-#define CTRL_MEAS   0x00F4
-// Oversampling of temperature data control bits
-#define OSRS_T_0    ( 1 << 5 )
-#define OSRS_T_1    ( 1 << 6 )
-#define OSRS_T_2    ( 1 << 7 )
-// Oversampling of pressure data control bits
-#define OSRS_P_0    ( 1 << 2 )
-#define OSRS_P_1    ( 1 << 3 )
-#define OSRS_P_2    ( 1 << 4 )
-// Operating mode
-#define OP_MODE_0   ( 1 << 0 )
-#define OP_MODE_1   ( 1 << 1 )
-
-// Temperature registers
-#define TEMP_LSB    0xFB
-#define TEMP_MSB    0xFA
-
-// Device ID register
-#define ID          0xD0
-
-
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
@@ -112,96 +87,20 @@ void appMain() {
   };
   GPIO_Init(GPIOB, &gpio_init_struct);
 
-  // Pull down the chip select so BMP280 enters the SPI mode
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
-  sleepus(10000);
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
-
   // Initialize SPI in DMA mode
   spiBegin();
-
-  uint8_t val = 0;
-  // First read the id register
-  //DEBUG_PRINT("Read sensor id: %X and correct is 0x58\n", val);
 
   static uint8_t tx_b, rx_b;
   while(1) {
     GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
-    //spiBeginTransaction(SPI_BAUDRATE_2MHZ);
     spiBeginTransaction(SPI_BAUDRATE_2MHZ);
     tx_b = 137;
     spiExchange(1, &tx_b, &rx_b); // Send control byte with address
-    DEBUG_PRINT("Received from ardu: %d\n", rx_b);
+    DEBUG_PRINT("Received from slave: %d\n", rx_b);
     GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
     spiEndTransaction();
     vTaskDelay(M2T(2000));
   }
-  register_write(*GPIOB, GPIO_Pin_4, CTRL_MEAS, val);
-  register_read(*GPIOB, GPIO_Pin_4, ID, &val);
-}
-
-// TODO: Get rid of timeouts: lookup https://github.com/adafruit/Adafruit_BusIO/blob/master/Adafruit_SPIDevice.cpp
-// TODO: Add some prints to checkout the values that are modified in below functions
-// TODO: Add handling of return bool value from spiExchange
-// First send the full register addr without 7th bit (used as operation
-// indicator RW=0 for write) that is control byte and then data byte
-
-// Done:
-// Mode is correct 00
-// Mode 4 wire is correct
-// Changed /CS order with spiBegin (mode select is after falling edge on cs and
-// is determined on the idle state of the clock)
-// Static buffers introduced
-// Maybe we should write 2 bytes in one transmission instead of 1 by 1
-static void register_write(
-    const GPIO_TypeDef cs_gpio,
-    const uint16_t cs_pin,
-    uint8_t reg,
-    uint8_t val) {
-  static uint8_t tx_buff, dummy;
-
-  // Set operation indicator bit as write
-  reg |= RW_BIT;
-
-  // First assert /CS - SPI mode selection for BMP280
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
-  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
-
-  // Send control byte with address and then value for that address 8 bit regs
-  tx_buff = reg;
-  spiExchange(1, &tx_buff, &dummy); // Send control byte with address
-  tx_buff = val;
-  spiExchange(1, &tx_buff, &dummy); // Send value
-
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
-  spiEndTransaction();
-}
-
-static void register_read(
-    const GPIO_TypeDef cs_gpio,
-    const uint16_t cs_pin,
-    uint8_t reg,
-    uint8_t *val){
-  uint8_t dummy = 0;
-  static uint8_t tx_buff, rx_buff;
-
-  // clear operation indicator bit - read
-  reg &= ~(RW_BIT);
-
-  // First assert /CS - SPI mode selection for BMP280
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
-  spiBeginTransaction(SPI_BAUDRATE_2MHZ);
-
-  // Send an address to read and then 0 and read value
-  tx_buff = reg;
-  spiExchange(1, &tx_buff, &dummy);
-  spiExchange(1, 0, &rx_buff);
-
-  GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
-  spiEndTransaction();
-
-  *val = rx_buff;
-  rx_buff = 0;
 }
 
 
