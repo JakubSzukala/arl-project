@@ -146,11 +146,6 @@ void DecraseTimingDelay()
   if(TimingDelay != 0) TimingDelay--;
 }
 
-static void appTask()
-{
-
-}
-
 #ifdef  USE_FULL_ASSERT
 
 /**
