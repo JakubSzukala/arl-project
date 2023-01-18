@@ -21,9 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-#include "FreeRTOSConfig.h"
-#include "FreeRTOS.h"
-#include "task.h"
 
 //#include "stm32fxxx.h"
 
