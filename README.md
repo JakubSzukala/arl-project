@@ -104,21 +104,32 @@ Build for the flapper!
 
 ### Examples
 
+Examples can be build in usual way described above. Just enter the example
+directory and run make. Remember to export environmental variable.
+
+1. app\_hello\_world - The most basic demonstration of crazyflie application. Every 2 seconds, prints "Hello World!".
+2. app\_i2c\_bmp280 - Application that will communicate with BMP280 sensor over I2C. Uses I2C driver implementation from crazyflie and framework from Bosch Sensortec. Does not work properly in current iteration. Constant value is read from the bus.
+3. 
+
 ### spl\_uart
 
 Source files in this directory are an attempt to simulate reduced crazyflie's
 hardware in [Renode](https://github.com/renode/renode) and test the interfaces
-in an isolated manner.
+in an isolated manner. **We discontinued this project as we decided that the
+crazyflie firmware is too coupled to isolate single interface.**
 
 Example there is an implementation of UART interface on
 STM32F4 (exactly the same model as on crazyflie) with STM32F4xx\_StdPeriph\_Driver
 library in exact version used in [crazyflie to handle UART](https://github.com/bitcraze/crazyflie-firmware/tree/master/src/lib/STM32F4xx_StdPeriph_Driver).
 
-To run the simulation, first install Renode according to instructions. To run
-the simulation, use *.resc* configuration file. It will use the STM32F4 platform
+First install Renode according to instructions. Simulation environment is set
+with use of *.resc* configuration file. It will use the STM32F4 platform
 description file and display communication results on *UART3*. To start simulation
 run:
+
 ```bash
-$ 
+$ ./renode /path/to/repo/arl-project/spl_uart/renode-scripts/stm32f4_spl_uart.resc
 ```
 
+You should see the Renode terminal with an UART3 analyzer in which "Hello
+STM32!" should be displayed.
