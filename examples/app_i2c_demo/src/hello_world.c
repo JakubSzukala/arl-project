@@ -35,7 +35,8 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-#include "i2c_api.h"
+
+#include "i2c_drv.h"
 
 #define DEBUG_MODULE "HELLOWORLD"
 #include "debug.h"
@@ -44,9 +45,28 @@
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
 
+  // Init i2c device to exposed bus
+  i2cdrvInit(&deckBus);
+
+  // Create a message
+  I2cMessage msg;
+  uint8_t msg_len = 5;
+  uint8_t buffer[] = {0x0, 0x1, 0x2, 0x3, 0x4};
+  uint8_t slave_addr = 0x6;
+  i2cdrvCreateMessage(&msg, slave_addr, i2cWrite, msg_len, buffer);
+
+  // Indicate that communication between cfclient and crazyflie works
+  DEBUG_PRINT("Hello World!\n");
+
+  bool success = false;
   while(1) {
+    success = i2cdrvMessageTransfer(&deckBus, &msg);
+    if(success) {
+      DEBUG_PRINT("Message transfered successfully\n");
+    }
+    else {
+      DEBUG_PRINT("ERROR transmitting I2C message\n");
+    }
     vTaskDelay(M2T(2000));
-    DEBUG_PRINT("Hello World!\n");
-    int a = add_num(1, 2);
   }
 }

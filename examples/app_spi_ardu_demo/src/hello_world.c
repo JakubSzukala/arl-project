@@ -63,6 +63,7 @@
  * - src/drivers/src/pmw3901.c
  **/
 
+/*
 static void register_write(
     const GPIO_TypeDef cs_gpio,
     const uint16_t cs_pin,
@@ -73,7 +74,7 @@ static void register_read(
     const uint16_t cs_pin,
     uint8_t reg,
     uint8_t *val);
-
+*/
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
 

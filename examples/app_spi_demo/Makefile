@@ -23,6 +23,6 @@ OOT_CONFIG := $(PWD)/app-config
 #
 # Add also a path to .h include files
 #
-EXTRA_CFLAGS += -I$(PWD)/../../src/
+#EXTRA_CFLAGS += -I$(PWD)/../../src/
 
 include $(CRAZYFLIE_BASE)/tools/make/oot.mk
