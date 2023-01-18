@@ -10,7 +10,7 @@ of a reminder for people familiar with the procedure and for pretty specific cas
 Please use official documentation if it is Your first encounter with the
 drone / build procedure.
 
-#### Setup
+### Setup
 
 First clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) repository **with all submodules**:
 
@@ -102,11 +102,23 @@ After modifying the app-config for Flapper we should get:
 Build for the flapper!
 ```
 
-Crazyflie on default when malloc or stackoverflow happens, will turn off motors.
+### Examples
 
-# TODOs
+### spl\_uart
 
-- Looked up bosch's driver and it really is just a framework to which You can
-insert Your own read and write functions. So it is not much of a help
-- In crazyflie indeed i2c is implemented in this way so it should work
-- 
+Source files in this directory are an attempt to simulate reduced crazyflie's
+hardware in [Renode](https://github.com/renode/renode) and test the interfaces
+in an isolated manner.
+
+Example there is an implementation of UART interface on
+STM32F4 (exactly the same model as on crazyflie) with STM32F4xx\_StdPeriph\_Driver
+library in exact version used in [crazyflie to handle UART](https://github.com/bitcraze/crazyflie-firmware/tree/master/src/lib/STM32F4xx_StdPeriph_Driver).
+
+To run the simulation, first install Renode according to instructions. To run
+the simulation, use *.resc* configuration file. It will use the STM32F4 platform
+description file and display communication results on *UART3*. To start simulation
+run:
+```bash
+$ 
+```
+
