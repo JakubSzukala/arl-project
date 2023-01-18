@@ -25,7 +25,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "stm32fxxx.h"
+//#include "stm32fxxx.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
