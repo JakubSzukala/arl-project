@@ -37,6 +37,7 @@
 #include "task.h"
 
 #include "i2c_drv.h"
+#include "i2cdev.h"
 
 #define DEBUG_MODULE "HELLOWORLD"
 #include "debug.h"
@@ -48,24 +49,37 @@ void appMain() {
   // Init i2c device to exposed bus
   i2cdrvInit(&deckBus);
 
-  // Create a message
-  I2cMessage msg;
-  uint8_t msg_len = 5;
-  uint8_t buffer[] = {0x0, 0x1, 0x2, 0x3, 0x4};
   uint8_t slave_addr = 0x6;
-  i2cdrvCreateMessage(&msg, slave_addr, i2cWrite, msg_len, buffer);
+  uint8_t msg_len = 5;
+
+  uint8_t tx_buf[] = {0x0, 0x1, 0x2, 0x3, 0x4};
+  uint8_t rx_buf[] = {0x0, 0x0, 0x0 ,0x0, 0x0};
 
   // Indicate that communication between cfclient and crazyflie works
   DEBUG_PRINT("Hello World!\n");
 
   bool success = false;
   while(1) {
-    success = i2cdrvMessageTransfer(&deckBus, &msg);
+    // I2C write
+    success = i2cdevWrite(&deckBus, slave_addr, msg_len, tx_buf);
     if(success) {
       DEBUG_PRINT("Message transfered successfully\n");
     }
     else {
       DEBUG_PRINT("ERROR transmitting I2C message\n");
+    }
+    vTaskDelay(M2T(2000));
+
+    // I2C read
+    success = i2cdevRead(&deckBus, slave_addr, msg_len, rx_buf);
+    if(success) {
+      DEBUG_PRINT("Received data from slave: \n");
+      for(uint8_t i = 0; i < msg_len; i++) {
+        DEBUG_PRINT("%d\n", rx_buf[i]);
+      }
+    }
+    else {
+      DEBUG_PRINT("ERROR receving data. \n");
     }
     vTaskDelay(M2T(2000));
   }
