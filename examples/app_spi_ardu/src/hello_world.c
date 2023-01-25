@@ -91,13 +91,19 @@ void appMain() {
   // Initialize SPI in DMA mode
   spiBegin();
 
-  static uint8_t tx_b, rx_b;
+  //static uint8_t tx_b[] = {0x1, 0x0, 0x0, 0x0, 0x0}, rx_b[5] = {0};
+  static uint8_t tx_b = 0, rx_b = 0;
   while(1) {
     GPIO_WriteBit(GPIOB, GPIO_Pin_4, 0);
-    spiBeginTransaction(SPI_BAUDRATE_2MHZ);
-    tx_b = 137;
-    spiExchange(1, &tx_b, &rx_b); // Send control byte with address
+    //spiBeginTransaction(SPI_BAUDRATE_2MHZ);
+    spiBeginTransaction(SPI_BAUDRATE_12MHZ);
+    spiExchange(5, &tx_b, &rx_b); // Send control byte with address
     DEBUG_PRINT("Received from slave: %d\n", rx_b);
+    DEBUG_PRINT("Transmitted to slave: %d", tx_b);
+    tx_b++;
+    //for(uint8_t i = 0; i < 5; i++) {
+    //  DEBUG_PRINT("%d\n", rx_b[i]);
+    //}
     GPIO_WriteBit(GPIOB, GPIO_Pin_4, 1);
     spiEndTransaction();
     vTaskDelay(M2T(2000));
