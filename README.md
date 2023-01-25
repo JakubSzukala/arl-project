@@ -1,5 +1,12 @@
 # arl-project
 
+# Authors
+
+* Jakub Szukała
+* Filip Augustyniak
+* Mikołaj Borys
+* Jakub Bohonos
+
 This repository contains source files for extending functionalities of Crazyflie
 drone and Flapper Drone.
 
@@ -13,6 +20,7 @@ drone / build procedure.
 ### Setup
 
 First clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) repository **with all submodules**:
+The commit hash that we used for testing is: d89b96226ddd4540171770a036a375c8606b4f1f
 
 ```bash
 $ git clone --recursive https://github.com/bitcraze/crazyflie-firmware.git
