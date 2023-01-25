@@ -124,6 +124,17 @@ directory and run make. Remember to export environmental variable.
 7. app\_toggle\_GPIO - Application that demonstrates simple toggling of GPIO. LED can be connected to that GPIO.
 8. app\_uart\_demo - Successfull attempt to communicate over UART between crazyflie and Arduino.
 
+### Working applications screens
+
+![working_i2c_crazyflie_master](images/working_i2c_crazyflie_master.png)
+*Working crazyflie master*
+
+![working_i2c_stm32_slave](images/working_i2c_stm32_slave.png)
+*Working STM32 slave*
+
+![renode_simulation](images/renode_simulation.png)
+*Attempt of simulating onboard Crazyflie's STM32*
+
 ### STM3\_slave
 
 This directory contains source files that were used to perform communication with STM32 over SPI and I2C interfaces. This source code is prepared for STM32F7 Nucleo board.
