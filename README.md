@@ -108,8 +108,17 @@ Examples can be build in usual way described above. Just enter the example
 directory and run make. Remember to export environmental variable.
 
 1. app\_hello\_world - The most basic demonstration of crazyflie application. Every 2 seconds, prints "Hello World!".
-2. app\_i2c\_bmp280 - Application that will communicate with BMP280 sensor over I2C. Uses I2C driver implementation from crazyflie and framework from Bosch Sensortec. Does not work properly in current iteration. Constant value is read from the bus.
-3. 
+2. app\_i2c\_ardu - Demo showcasing communication with Arduino / STM32 over I2C interface, with crazyflie as master. Working properly.
+3. app\_i2c\_bmp280 - Application that will communicate with BMP280 sensor over I2C. Uses I2C driver implementation from crazyflie and framework from Bosch Sensortec. Does not work properly in current iteration. Constant value is read from the bus.
+4. app\_i2c\_demo - Attempt to communicate over I2C. Not working currently.
+5. app\_spi\_ardu - Attempt to communicate with Arduino / STM32 over SPI with crazyflie as master. Not working currently. There is constant bit shifting at the receiver side.
+6. app\_spi\_demo - Attempt to communicate with BMP280 over SPI interface. Communication would be reading and writing to registers. Currently not working. Sensor is not responding to communication attempts. On oscilloscope communication looks fine.
+7. app\_toggle\_GPIO - Application that demonstrates simple toggling of GPIO. LED can be connected to that GPIO.
+8. app\_uart\_demo - Successfull attempt to communicate over UART between crazyflie and Arduino.
+
+### STM3\_slave
+
+This directory contains source files that were used to perform communication with STM32 over SPI and I2C interfaces. This source code is prepared for STM32F7 Nucleo board.
 
 ### spl\_uart
 
