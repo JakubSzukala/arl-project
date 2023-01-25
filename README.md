@@ -142,7 +142,7 @@ This directory contains source files that were used to perform communication wit
 // set 1 to use SPI program try to communicate via I2C
 #define use_spi 1
 ```
-![pins](arl-project/images/arl_pro_pins.png)
+![pins](images/arl_pro_pins.png)
 ### spl\_uart
 
 Source files in this directory are an attempt to simulate reduced crazyflie's
