@@ -135,10 +135,13 @@ directory and run make. Remember to export environmental variable.
 ![renode_simulation](images/renode_simulation.png)
 *Attempt of simulating onboard Crazyflie's STM32*
 
-### STM3\_slave
+### STM32\_slave
 
 This directory contains source files that were used to perform communication with STM32 over SPI and I2C interfaces. This source code is prepared for STM32F7 Nucleo board.
-
+```c
+// set 1 to use SPI program try to communicate via I2C
+#define use_spi 1
+```
 ### spl\_uart
 
 Source files in this directory are an attempt to simulate reduced crazyflie's
